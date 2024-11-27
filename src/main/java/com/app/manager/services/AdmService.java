@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class AdmService {
@@ -20,5 +22,13 @@ public class AdmService {
         });
         AdmEntity admEntity = admRepository.save(admMapper.toModel(admDto));
         return admMapper.toDto(admEntity);
+    }
+
+    public List<AdmDto> findAll() {
+        List<AdmEntity> adms = admRepository.findAll();
+        if (adms.isEmpty()) {
+            throw new RuntimeException("Nenhum Adm encontrado");
+        }
+        return admMapper.ListAdmDto(adms);
     }
 }
