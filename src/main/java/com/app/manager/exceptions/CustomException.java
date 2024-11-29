@@ -1,9 +1,11 @@
 package com.app.manager.exceptions;
 
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 import java.util.Map;
 
+@Getter
 public class CustomException extends RuntimeException {
     private final HttpStatus httpStatus;
     private final Map<String, String> errors;
