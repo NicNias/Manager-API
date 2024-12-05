@@ -10,6 +10,7 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,5 +27,10 @@ public class AdmController {
     @GetMapping("/adm")
     public ResponseEntity<List<AdmDto>> getAllAdms() {
         return ResponseEntity.status(HttpStatus.OK).body(admService.findAll());
+    }
+
+    @GetMapping("/adm/{id}")
+    public ResponseEntity<AdmDto> getOneAdm(@PathVariable UUID id) {
+        return ResponseEntity.status(HttpStatus.OK).body(admService.findById(id));
     }
 }
