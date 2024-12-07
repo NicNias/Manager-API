@@ -7,6 +7,7 @@ import com.app.manager.mappers.AdmMapper;
 import com.app.manager.repository.AdmRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,14 +18,18 @@ import java.util.UUID;
 public class AdmService {
     private final AdmMapper admMapper;
     private final AdmRepository admRepository;
-    private final BCryptPasswordEncoder passwordEncoder = new BCryp
+
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public AdmDto createAdm(AdmDto admDto) {
         admRepository.findByEmail(admDto.email()).ifPresent(admEntity -> {
             throw new CustomException("Email ja cadastrado no Sistema", HttpStatus.CONFLICT, null);
         });
-        AdmEntity admEntity = admRepository.save(admMapper.toModel(admDto));
-        return admMapper.toDto(admEntity);
+        String encrytedPassword = passwordEncoder.encode(admDto.password());
+        AdmEntity newAdm = admMapper.toModel(admDto);
+        newAdm.setPassword(encrytedPassword);
+        admRepository.save(newAdm);
+        return admMapper.toDto(newAdm);
     }
 
     public List<AdmDto> findAll() {
@@ -40,5 +45,21 @@ public class AdmService {
             throw new CustomException("Adm não está cadastrado", HttpStatus.NOT_FOUND, null);
         });
         return admMapper.toDto(adm);
+    }
+
+    public AdmDto updateAdm(UUID id, AdmDto admDto) {
+        AdmEntity adm = admRepository.findById(id).orElseThrow(() -> {
+            throw new CustomException("Adm não está cadastrado", HttpStatus.NOT_FOUND, null);
+        });
+        admMapper.updateEntityFromDto(admDto, adm);
+        AdmEntity updateEntity = admRepository.save(adm);
+        return admMapper.toDto(updateEntity);
+    }
+
+    public void deleteAdm(UUID id) {
+        AdmEntity adm = admRepository.findById(id).orElseThrow(() -> {
+            throw new CustomException("Adm não está cadastrado", HttpStatus.NOT_FOUND, null);
+        });
+        admRepository.delete(adm);
     }
 }
