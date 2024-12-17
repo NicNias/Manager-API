@@ -3,6 +3,7 @@ package com.app.manager.mappers;
 import com.app.manager.dto.AdmDto;
 import com.app.manager.entity.AdmEntity;
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
 
 import java.util.List;
 
@@ -12,4 +13,6 @@ public interface AdmMapper {
     AdmDto toDto(AdmEntity admEntity);
 
     List<AdmDto> ListAdmDto(List<AdmEntity> adms);
+
+    void updateEntityFromDto(AdmDto admDto, @MappingTarget AdmEntity admEntity);
 }
