@@ -2,6 +2,7 @@ package com.app.manager.exceptions;
 
 import com.app.manager.dto.ExceptionResponseDto;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -18,6 +19,12 @@ public class GlobalExceptionHandler {
         response.setMessage(ex.getMessage());
         response.setErros(ex.getErrors());
         return ResponseEntity.status(ex.getHttpStatus()).body(response);
+    }
+
+    @ExceptionHandler(BaseException.class)
+    public ResponseEntity<ProblemDetail> handleUnauthorizedInSecrity(BaseException exception) {
+        ProblemDetail probD = exception.problemDetail();
+        return ResponseEntity.status(probD.getStatus()).body(probD);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
