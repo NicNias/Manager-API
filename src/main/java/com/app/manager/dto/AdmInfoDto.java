@@ -7,7 +7,8 @@ import java.util.UUID;
 
 @Getter
 @Setter
-public class AdmDto {
+public class AdmInfoDto {
+    private UUID id;
     private String name;
     private String email;
     private String password;
