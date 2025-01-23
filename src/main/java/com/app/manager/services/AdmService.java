@@ -1,6 +1,7 @@
 package com.app.manager.services;
 
 import com.app.manager.dto.AdmDto;
+import com.app.manager.dto.AdmInfoDto;
 import com.app.manager.entity.AdmEntity;
 import com.app.manager.exceptions.CustomException;
 import com.app.manager.mappers.AdmMapper;
@@ -32,7 +33,7 @@ public class AdmService {
         return admMapper.toDto(newAdm);
     }
 
-    public List<AdmDto> findAll() {
+    public List<AdmInfoDto> findAll() {
         List<AdmEntity> adms = admRepository.findAll();
         if (adms.isEmpty()) {
             throw new CustomException("Nenhum Adm encontrado", HttpStatus.NOT_FOUND, null);
@@ -40,17 +41,21 @@ public class AdmService {
         return admMapper.ListAdmDto(adms);
     }
 
-    public AdmDto findById(UUID id) {
+    public AdmInfoDto findById(UUID id) {
         AdmEntity adm = admRepository.findById(id).orElseThrow(() -> {
             throw new CustomException("Adm não está cadastrado", HttpStatus.NOT_FOUND, null);
         });
-        return admMapper.toDto(adm);
+        return admMapper.toInfoDto(adm);
     }
 
     public AdmDto updateAdm(UUID id, AdmDto admDto) {
         AdmEntity adm = admRepository.findById(id).orElseThrow(() -> {
             throw new CustomException("Adm não está cadastrado", HttpStatus.NOT_FOUND, null);
         });
+        if (admDto.password() != null && !admDto.password().isEmpty()) {
+            String encryptedPassword = passwordEncoder.encode(admDto.password());
+            adm.setPassword(encryptedPassword);
+        }
         admMapper.updateEntityFromDto(admDto, adm);
         AdmEntity updateEntity = admRepository.save(adm);
         return admMapper.toDto(updateEntity);

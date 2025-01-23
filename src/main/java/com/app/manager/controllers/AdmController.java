@@ -1,6 +1,7 @@
 package com.app.manager.controllers;
 
 import com.app.manager.dto.AdmDto;
+import com.app.manager.dto.AdmInfoDto;
 import com.app.manager.dto.AuthenticationRequestDto;
 import com.app.manager.dto.SessionDto;
 import com.app.manager.mappers.AdmMapper;
@@ -40,12 +41,24 @@ public class AdmController {
     }
 
     @GetMapping("/findall")
-    public ResponseEntity<List<AdmDto>> getAllAdms() {
+    public ResponseEntity<List<AdmInfoDto>> getAllAdms() {
         return ResponseEntity.status(HttpStatus.OK).body(admService.findAll());
     }
 
     @GetMapping("/findone/{id}")
-    public ResponseEntity<AdmDto> getOneAdm(@PathVariable UUID id) {
+    public ResponseEntity<AdmInfoDto> getOneAdm(@PathVariable UUID id) {
         return ResponseEntity.status(HttpStatus.OK).body(admService.findById(id));
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<AdmDto> updateAdm(@PathVariable UUID id, @RequestBody @Valid AdmDto admDto) {
+        AdmDto adm = admService.updateAdm(id, admDto);
+        return ResponseEntity.status(HttpStatus.OK).body(adm);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteAdm(@PathVariable UUID id) {
+        admService.deleteAdm(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
